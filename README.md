@@ -10,6 +10,12 @@
 
     To run all commands at once : make all
 
+### Migration
+
+    `python manage.py db init` create migration
+    `python manage.py db migrate` migrate db
+    `python manage.py db upgrade` upgrade db to current revision
+    `python manage.py db --help` print help
 
 ### App URL
 
