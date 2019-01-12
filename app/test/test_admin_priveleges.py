@@ -15,6 +15,9 @@ valid_user_data = dict(
             password=password
         )
 
+wrong_public_user_id = 'af06c82b-ce9f-4a72-8c67-275b1e336dda'
+wrong_token = '4c11a3f2-8788-4ecb-825f-d97c0c29f5e6'
+
 
 def create_user_with_admin_privileges():
     user = {'email': 'admin@dorokhin.moscow',
@@ -84,9 +87,7 @@ class TestAdminPrivileges(BaseTestCase):
             """
             Test get user by public_id
             """
-            # user registration
             create_user_with_admin_privileges()
-            # user login
             resp_login = login_user(self, valid_user_data)
             data_login = json.loads(resp_login.data.decode())
 
@@ -102,7 +103,7 @@ class TestAdminPrivileges(BaseTestCase):
                 )
             )
 
-            get_user_bypublic_id = self.client.get(
+            get_user_by_public_id = self.client.get(
                 '/user/{0}'.format(json.loads(logget_user.data.decode())['data'][0]['public_id']),
                 headers=dict(
                     Authorization='' + json.loads(
@@ -111,11 +112,42 @@ class TestAdminPrivileges(BaseTestCase):
                 )
             )
 
-            self.assertEqual(200, get_user_bypublic_id.status_code)
-            self.assertEqual('admin', json.loads(get_user_bypublic_id.data.decode())['username'])
-            self.assertEqual('admin@dorokhin.moscow', json.loads(get_user_bypublic_id.data.decode())['email'])
-            self.assertEqual(None, json.loads(get_user_bypublic_id.data.decode())['password'])
-            self.assertTrue(json.loads(get_user_bypublic_id.data.decode())['public_id'])
+            self.assertEqual(200, get_user_by_public_id.status_code)
+            self.assertEqual('admin', json.loads(get_user_by_public_id.data.decode())['username'])
+            self.assertEqual('admin@dorokhin.moscow', json.loads(get_user_by_public_id.data.decode())['email'])
+            self.assertEqual(None, json.loads(get_user_by_public_id.data.decode())['password'])
+            self.assertTrue(json.loads(get_user_by_public_id.data.decode())['public_id'])
+
+    def test_get_user_with_wrong_id(self):
+        with self.client:
+            """
+            Test get user with wrong public_id
+            """
+            create_user_with_admin_privileges()
+            resp_login = login_user(self, valid_user_data)
+
+            get_user_by_public_id = self.client.get(
+                '/user/{0}'.format(wrong_public_user_id),
+                headers=dict(
+                    Authorization='' + json.loads(
+                        resp_login.data.decode()
+                    )['Authorization']
+                )
+            )
+            self.assertEqual(404, get_user_by_public_id.status_code)
+
+    def test_get_user_with_invalid_token(self):
+        with self.client:
+            get_user_by_public_id = self.client.get(
+                '/user/{0}'.format(wrong_public_user_id),
+                headers=dict(
+                    Authorization='{0}'.format(wrong_token)
+                )
+            )
+            self.assertEqual('Invalid token. Please log in again.',
+                             json.loads(get_user_by_public_id.data.decode())['message'])
+            self.assertEqual('fail', json.loads(get_user_by_public_id.data.decode())['status'])
+            self.assertEqual(401, get_user_by_public_id.status_code)
 
 
 if __name__ == '__main__':
