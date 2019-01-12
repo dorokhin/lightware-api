@@ -149,6 +149,16 @@ class TestAdminPrivileges(BaseTestCase):
             self.assertEqual('fail', json.loads(get_user_by_public_id.data.decode())['status'])
             self.assertEqual(401, get_user_by_public_id.status_code)
 
+    def test_get_user_without_token(self):
+        with self.client:
+            get_user_by_public_id = self.client.get(
+                '/user/{0}'.format(wrong_public_user_id)
+            )
+            self.assertEqual('Provide a valid auth token.',
+                             json.loads(get_user_by_public_id.data.decode())['message'])
+            self.assertEqual('fail', json.loads(get_user_by_public_id.data.decode())['status'])
+            self.assertEqual(401, get_user_by_public_id.status_code)
+
 
 if __name__ == '__main__':
     unittest.main()
