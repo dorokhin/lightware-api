@@ -1,5 +1,6 @@
 ## LightWare RESTFUL API
 [![codecov](https://codecov.io/gh/dorokhin/lightware-api/branch/master/graph/badge.svg)](https://codecov.io/gh/dorokhin/lightware-api)
+[![Build Status](https://travis-ci.org/dorokhin/lightware-api.svg?branch=master)](https://travis-ci.org/dorokhin/lightware-api)
 
 ### Console commands
 
