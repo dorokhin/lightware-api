@@ -1,5 +1,5 @@
 ## LightWare RESTFUL API
-
+[![codecov](https://codecov.io/gh/dorokhin/lightware-api/branch/master/graph/badge.svg)](https://codecov.io/gh/dorokhin/lightware-api)
 
 ### Console commands
 
