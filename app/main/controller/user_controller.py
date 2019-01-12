@@ -1,7 +1,7 @@
 from flask import request
 from flask_restplus import Resource
 
-from app.main.util.decorator import admin_token_required
+from app.main.util.decorator import admin_token_required, token_required
 from ..util.dto import UserDto
 from ..service.user_service import process_new_user, get_all_users, get_a_user
 
@@ -32,12 +32,12 @@ class UserList(Resource):
 @api.response(404, 'User not found.')
 class User(Resource):
     @api.doc('Get user by id')
+    @token_required
     @api.marshal_with(_user)
     def get(self, public_id):
         user = get_a_user(public_id)
         if not user:
-            # api.abort(404)
-            return 'abort', 201
+            return 'abort', 404
         else:
             return user
 
