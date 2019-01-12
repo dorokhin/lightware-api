@@ -22,3 +22,11 @@
 
     Key: Authorization
     Value: "token_generated_during_login"
+    
+
+### Coverage & tests
+
+`coverage run --source app  manage.py test`
+
+`coverage report`
+
