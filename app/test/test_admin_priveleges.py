@@ -71,7 +71,7 @@ class TestAdminPrivileges(BaseTestCase):
             response = self.client.get(
                 '/user/',
                 headers=dict(
-                    Authorization='' + json.loads(
+                    Authorization='Bearer ' + json.loads(
                         resp_login.data.decode()
                     )['Authorization']
                 )
@@ -97,7 +97,7 @@ class TestAdminPrivileges(BaseTestCase):
             logget_user = self.client.get(
                 '/user/',
                 headers=dict(
-                    Authorization='' + json.loads(
+                    Authorization='Bearer ' + json.loads(
                         resp_login.data.decode()
                     )['Authorization']
                 )
@@ -106,7 +106,7 @@ class TestAdminPrivileges(BaseTestCase):
             get_user_by_public_id = self.client.get(
                 '/user/{0}'.format(json.loads(logget_user.data.decode())['data'][0]['public_id']),
                 headers=dict(
-                    Authorization='' + json.loads(
+                    Authorization='Bearer ' + json.loads(
                         resp_login.data.decode()
                     )['Authorization']
                 )
@@ -129,7 +129,7 @@ class TestAdminPrivileges(BaseTestCase):
             get_user_by_public_id = self.client.get(
                 '/user/{0}'.format(wrong_public_user_id),
                 headers=dict(
-                    Authorization='' + json.loads(
+                    Authorization='Bearer ' + json.loads(
                         resp_login.data.decode()
                     )['Authorization']
                 )
@@ -141,7 +141,7 @@ class TestAdminPrivileges(BaseTestCase):
             get_user_by_public_id = self.client.get(
                 '/user/{0}'.format(wrong_public_user_id),
                 headers=dict(
-                    Authorization='{0}'.format(wrong_token)
+                    Authorization='Bearer {0}'.format(wrong_token)
                 )
             )
             self.assertEqual('Invalid token. Please log in again.',
