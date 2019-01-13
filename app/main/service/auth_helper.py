@@ -56,7 +56,10 @@ class Auth:
     def get_logged_in_user(new_request):
         auth_token = new_request.headers.get('Authorization')
         if auth_token:
-            resp = User.decode_auth_token(auth_token.split(" ")[1])
+            try:
+                resp = User.decode_auth_token(auth_token.split(" ")[1])
+            except IndexError as e:
+                return {'status': 'fail', 'message': 'some error occured'}, 403
             if not isinstance(resp, str):
                 user = User.query.filter_by(id=resp).first()
                 response_object = {
