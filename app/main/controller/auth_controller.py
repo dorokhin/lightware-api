@@ -13,7 +13,7 @@ class UserLogin(Resource):
     """
         User Login Resource
     """
-    @api.doc('user login')
+    @api.doc('user login', security=None)
     @api.expect(user_auth, validate=True)
     def post(self):
         # get the post data
