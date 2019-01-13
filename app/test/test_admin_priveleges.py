@@ -149,6 +149,19 @@ class TestAdminPrivileges(BaseTestCase):
             self.assertEqual('fail', json.loads(get_user_by_public_id.data.decode())['status'])
             self.assertEqual(401, get_user_by_public_id.status_code)
 
+    def test_get_user_with_invalid_token_without_bearer_word(self):
+        with self.client:
+            get_user_by_public_id = self.client.get(
+                '/user/{0}'.format(wrong_public_user_id),
+                headers=dict(
+                    Authorization='{0}'.format(wrong_token)
+                )
+            )
+            self.assertEqual('Bearer does not exist',
+                             json.loads(get_user_by_public_id.data.decode())['message'])
+            self.assertEqual('fail', json.loads(get_user_by_public_id.data.decode())['status'])
+            self.assertEqual(401, get_user_by_public_id.status_code)
+
     def test_get_user_without_token(self):
         with self.client:
             get_user_by_public_id = self.client.get(

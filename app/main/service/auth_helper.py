@@ -59,7 +59,12 @@ class Auth:
             try:
                 resp = User.decode_auth_token(auth_token.split(" ")[1])
             except IndexError as e:
-                return {'status': 'fail', 'message': 'some error occured'}, 403
+                response_object = {
+                    'status': 'fail',
+                    'message': 'some error occurred' if 'Bearer' in list(auth_token.split(" "))
+                    else 'Bearer does not exist'
+                }
+                return response_object, 401
             if not isinstance(resp, str):
                 user = User.query.filter_by(id=resp).first()
                 response_object = {
