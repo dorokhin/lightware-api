@@ -1,6 +1,6 @@
 from flask_restplus import Resource
 from flask import request
-from app.main.util.decorator import admin_token_required
+from app.main.util.decorator import admin_token_required, token_required
 from ..util.dto import ChannelDto
 from ..service.channel_service import get_all_channels, add_channel, get_channel_state, update_channel
 
@@ -18,6 +18,7 @@ class ChannelList(Resource):
         """List all channels"""
         return get_all_channels()
 
+    @admin_token_required
     @api.response(201, 'Channel successfully created.')
     @api.doc('Create a new channel')
     @api.expect(_channel, validate=True)
@@ -26,8 +27,10 @@ class ChannelList(Resource):
         data = request.json
         return add_channel(data=data)
 
+    @admin_token_required
     @api.response(201, 'Channel successfully updated.')
     @api.doc('Update a channel')
+    @api.expect(_channel, validate=True)
     def put(self):
         """Update channel"""
         return 'test', 201
@@ -37,7 +40,9 @@ class ChannelList(Resource):
 @api.param('public_id', 'Channel identifier')
 @api.response(404, 'Channel not found.')
 class Channel(Resource):
+
     @api.doc('Get channel by id')
+    @token_required
     @api.marshal_with(_channel)
     def get(self, public_id):
         """Get channel by public_id"""
@@ -47,6 +52,7 @@ class Channel(Resource):
         else:
             return channel
 
+    @admin_token_required
     @api.doc('Update channel state')
     @api.marshal_with(_channel)
     @api.expect(_channel, validate=True)
