@@ -95,7 +95,6 @@ class TestAuthBlueprint(BaseTestCase):
             response = login_user(self, valid_user_data)
             data = json.loads(response.data.decode())
             self.assertTrue(data['status'] == 'fail')
-            print(data['message'])
             self.assertTrue(data['message'] == 'email or password does not match.')
             self.assertTrue(response.content_type == 'application/json')
             self.assertEqual(response.status_code, 401)
