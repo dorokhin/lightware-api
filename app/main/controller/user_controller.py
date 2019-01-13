@@ -40,6 +40,3 @@ class User(Resource):
             return 'abort', 404
         else:
             return user
-
-
-
