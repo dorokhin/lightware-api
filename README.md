@@ -31,7 +31,7 @@
     Authorization header is in the following format:
 
     Key: Authorization
-    Value: "token_generated_during_login"
+    Value: "Bearer token_generated_during_login"
     
 
 ### Coverage & tests
