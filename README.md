@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.org/dorokhin/lightware-api.svg?branch=master)](https://travis-ci.org/dorokhin/lightware-api)
 [![Requirements Status](https://requires.io/github/dorokhin/lightware-api/requirements.svg?branch=master)](https://requires.io/github/dorokhin/lightware-api/requirements/?branch=master)
 ![](https://img.shields.io/github/license/dorokhin/lightware-api.svg?logoColor=brightgreen&style=social)
+[![Maintainability](https://api.codeclimate.com/v1/badges/cb1ea70bb4d46276a2aa/maintainability)](https://codeclimate.com/github/dorokhin/lightware-api/maintainability)
+
 ### Console commands
 
     To run test: make tests
