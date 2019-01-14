@@ -3,6 +3,7 @@ import datetime
 
 from app.main import db
 from app.main.model.user import User
+from sqlalchemy.orm.exc import NoResultFound
 
 
 def create_new_user(user_data, is_admin):
@@ -17,23 +18,24 @@ def create_new_user(user_data, is_admin):
 
 
 def delete_user(public_id):
-    user_to_deletion = User.query.filter_by(public_id=public_id).one()
-    if not user_to_deletion:
-        response_object = {
-            'status': 'failed',
-            'message': 'User does not exist.',
-        }
+    try:
+        user_to_deletion = User.query.filter_by(public_id=public_id).one()
 
-        return response_object, 404
-    if user_to_deletion.is_admin:
+        if user_to_deletion.is_admin:
+            response_object = {
+                'status': 'failed',
+                'message': 'Unauthorized',
+            }
+            return response_object, 403
+        db.session.delete(user_to_deletion)
+        db.session.commit()
+        return None, 204
+    except NoResultFound as e:
         response_object = {
             'status': 'failed',
-            'message': 'Unauthorized.',
+            'message': 'User does not exist',
         }
-        return response_object, 403
-    db.session.delete(user_to_deletion)
-    db.session.commit()
-    return None, 204
+        return response_object, 404
 
 
 def process_new_user(data):
