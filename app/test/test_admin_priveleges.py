@@ -8,6 +8,12 @@ from app.main.service.user_service import create_new_user, save_changes
 admin_email = 'admin@dorokhin.moscow'
 admin_username = 'admin'
 admin_password = 'changeme'
+
+second_admin_email = 'admin2@dorokhin.moscow'
+second_admin_username = 'admin2'
+second_admin_password = 'changeme'
+
+
 wrong_password = 'wrong_password'
 
 email = 'test@dorokhin.moscow'
@@ -32,6 +38,14 @@ def create_user_with_admin_privileges():
     user = {'email': admin_email,
             'username': admin_username,
             'password': admin_password
+            }
+    save_changes(create_new_user(user, True))
+
+
+def create_second_user_with_admin_privileges():
+    user = {'email': second_admin_email,
+            'username': second_admin_username,
+            'password': second_admin_password
             }
     save_changes(create_new_user(user, True))
 
@@ -221,6 +235,67 @@ class TestAdminPrivileges(BaseTestCase):
                 )
             )
             self.assertEqual(204, deleted_user.status_code)
+
+    def test_delete_user_by_wrong_public_id(self):
+        with self.client:
+            """
+            Test delete user by wrong public_id
+            """
+            create_user_with_admin_privileges()
+            # user login
+            resp_login = login_user(self, valid_admin_data)
+
+            deleted_user = self.client.delete(
+                '/user/{0}'.format(wrong_public_user_id),
+                headers=dict(
+                    Authorization='Bearer ' + json.loads(
+                        resp_login.data.decode()
+                    )['Authorization']
+                )
+            )
+            error_response = json.loads(deleted_user.data.decode())
+            self.assertEqual(404, deleted_user.status_code)
+            self.assertEqual('failed', error_response['status'])
+            self.assertEqual('User does not exist', error_response['message'])
+
+    def test_delete_admin(self):
+        with self.client:
+            """
+            Test delete user admin
+            """
+            create_user_with_admin_privileges()
+            create_second_user_with_admin_privileges()
+            # user login
+            resp_login = login_user(self, valid_admin_data)
+            data_login = json.loads(resp_login.data.decode())
+
+            self.assertTrue(data_login['Authorization'])
+            self.assertTrue(resp_login.content_type == 'application/json')
+            self.assertEqual(resp_login.status_code, 200)
+
+            # pass valid token
+            response = self.client.get(
+                '/user/',
+                headers=dict(
+                    Authorization='Bearer ' + json.loads(
+                        resp_login.data.decode()
+                    )['Authorization']
+                )
+            )
+            users = json.loads(response.data.decode())['data']
+
+            responce_403 = self.client.delete(
+                '/user/{0}'.format(users[1]['public_id']),
+                headers=dict(
+                    Authorization='Bearer ' + json.loads(
+                        resp_login.data.decode()
+                    )['Authorization']
+                )
+            )
+            info = json.loads(responce_403.data.decode())
+            self.assertEqual(403, responce_403.status_code)
+            self.assertEqual('failed', info['status'])
+            self.assertEqual('Unauthorized', info['message'])
 
 
 if __name__ == '__main__':

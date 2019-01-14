@@ -20,7 +20,7 @@ class UserList(Resource):
         return get_all_users()
 
     @api.expect(_user, validate=True)
-    @api.response(201, 'User successfully created.')
+    @api.response(201, 'User successfully created')
     @api.doc('Create a new user')
     def post(self):
         data = request.json
@@ -29,10 +29,11 @@ class UserList(Resource):
 
 @api.route('/<public_id>')
 @api.param('public_id', 'The User identifier')
-@api.response(404, 'User not found.')
 class User(Resource):
     @api.doc('Get user by id')
+    @api.response(404, 'User not found')
     @token_required
+    @api.param('Authorization', 'Authorization token', _in='header')
     @api.marshal_with(_user)
     def get(self, public_id):
         user = get_a_user(public_id)
@@ -42,7 +43,9 @@ class User(Resource):
             return user
 
     @api.doc('Delete user by id')
+    @api.response(404, 'User not found')
+    @api.response(204, 'User was deleted')
     @admin_token_required
-    @api.marshal_with(_user)
+    @api.param('Authorization', 'Authorization token', _in='header')
     def delete(self, public_id):
         return delete_user(public_id)
