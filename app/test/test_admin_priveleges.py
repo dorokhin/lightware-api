@@ -210,7 +210,7 @@ class TestAdminPrivileges(BaseTestCase):
                     )['Authorization']
                 )
             )
-            users = json.loads(response.data)['data']
+            users = json.loads(response.data.decode())['data']
 
             deleted_user = self.client.delete(
                 '/user/{0}'.format(users[1]['public_id']),
