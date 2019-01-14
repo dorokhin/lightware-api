@@ -28,6 +28,10 @@ class User(db.Model):
     def check_password(self, password):
         return flask_bcrypt.check_password_hash(self.password_hash, password)
 
+    @property
+    def is_admin(self):
+        return self.admin
+
     @staticmethod
     def encode_auth_token(user_id):
         """

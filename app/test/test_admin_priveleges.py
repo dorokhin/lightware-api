@@ -5,10 +5,19 @@ from app.test.base import BaseTestCase
 
 from app.main.service.user_service import create_new_user, save_changes
 
-email = 'admin@dorokhin.moscow'
-username = 'admin'
-password = 'changeme'
+admin_email = 'admin@dorokhin.moscow'
+admin_username = 'admin'
+admin_password = 'changeme'
 wrong_password = 'wrong_password'
+
+email = 'test@dorokhin.moscow'
+username = 'test'
+password = 'changeme'
+
+valid_admin_data = dict(
+            email=admin_email,
+            password=admin_password
+        )
 
 valid_user_data = dict(
             email=email,
@@ -20,9 +29,9 @@ wrong_token = '4c11a3f2-8788-4ecb-825f-d97c0c29f5e6'
 
 
 def create_user_with_admin_privileges():
-    user = {'email': 'admin@dorokhin.moscow',
-            'username': 'admin',
-            'password': 'changeme'
+    user = {'email': admin_email,
+            'username': admin_username,
+            'password': admin_password
             }
     save_changes(create_new_user(user, True))
 
@@ -43,7 +52,7 @@ class TestAdminPrivileges(BaseTestCase):
             create_user_with_admin_privileges()
 
             # admin user login
-            response = login_user(self, valid_user_data)
+            response = login_user(self, valid_admin_data)
             data = json.loads(response.data.decode())
             self.assertTrue(data['status'] == 'success')
             self.assertTrue(data['message'] == 'Successfully logged in.')
@@ -61,7 +70,7 @@ class TestAdminPrivileges(BaseTestCase):
             create_user_with_admin_privileges()
 
             # user login
-            resp_login = login_user(self, valid_user_data)
+            resp_login = login_user(self, valid_admin_data)
             data_login = json.loads(resp_login.data.decode())
 
             self.assertTrue(data_login['Authorization'])
@@ -88,7 +97,7 @@ class TestAdminPrivileges(BaseTestCase):
             Test get user by public_id
             """
             create_user_with_admin_privileges()
-            resp_login = login_user(self, valid_user_data)
+            resp_login = login_user(self, valid_admin_data)
             data_login = json.loads(resp_login.data.decode())
 
             self.assertTrue(data_login['Authorization'])
@@ -124,7 +133,7 @@ class TestAdminPrivileges(BaseTestCase):
             Test get user with wrong public_id
             """
             create_user_with_admin_privileges()
-            resp_login = login_user(self, valid_user_data)
+            resp_login = login_user(self, valid_admin_data)
 
             get_user_by_public_id = self.client.get(
                 '/user/{0}'.format(wrong_public_user_id),
@@ -171,6 +180,47 @@ class TestAdminPrivileges(BaseTestCase):
                              json.loads(get_user_by_public_id.data.decode())['message'])
             self.assertEqual('fail', json.loads(get_user_by_public_id.data.decode())['status'])
             self.assertEqual(401, get_user_by_public_id.status_code)
+
+    def test_delete_user_by_id(self):
+        with self.client:
+            """
+            Test delete user by public_id
+            """
+            create_user_with_admin_privileges()
+            user = {'email': email,
+                    'username': username,
+                    'password': password
+                    }
+            save_changes(create_new_user(user, False))
+
+            # user login
+            resp_login = login_user(self, valid_admin_data)
+            data_login = json.loads(resp_login.data.decode())
+
+            self.assertTrue(data_login['Authorization'])
+            self.assertTrue(resp_login.content_type == 'application/json')
+            self.assertEqual(resp_login.status_code, 200)
+
+            # pass valid token
+            response = self.client.get(
+                '/user/',
+                headers=dict(
+                    Authorization='Bearer ' + json.loads(
+                        resp_login.data.decode()
+                    )['Authorization']
+                )
+            )
+            users = json.loads(response.data)['data']
+
+            deleted_user = self.client.delete(
+                '/user/{0}'.format(users[1]['public_id']),
+                headers=dict(
+                    Authorization='Bearer ' + json.loads(
+                        resp_login.data.decode()
+                    )['Authorization']
+                )
+            )
+            self.assertEqual(204, deleted_user.status_code)
 
 
 if __name__ == '__main__':

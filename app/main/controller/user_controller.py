@@ -3,7 +3,7 @@ from flask_restplus import Resource
 
 from app.main.util.decorator import admin_token_required, token_required
 from ..util.dto import UserDto
-from ..service.user_service import process_new_user, get_all_users, get_a_user
+from ..service.user_service import process_new_user, get_all_users, get_a_user, delete_user
 
 api = UserDto.api
 _user = UserDto.user
@@ -40,3 +40,9 @@ class User(Resource):
             return 'abort', 404
         else:
             return user
+
+    @api.doc('Delete user by id')
+    @admin_token_required
+    @api.marshal_with(_user)
+    def delete(self, public_id):
+        return delete_user(public_id)
