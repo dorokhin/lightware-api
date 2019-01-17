@@ -9,8 +9,9 @@ norilsk_time = timezone(datetime.timedelta(0, 25200), 'Asia/Krasnoyarsk')
 
 
 def add_channel(data):
-
-    channel = Channel.query.filter_by(public_id=data['public_id']).first()
+    channel = None
+    if data.get('public_id'):
+        channel = Channel.query.filter_by(public_id=data['public_id']).first()
     if not channel:
         new_channel = Channel(
             name=data['name'],
@@ -21,10 +22,11 @@ def add_channel(data):
             public_id=str(uuid.uuid4()),
 
         )
-        save_obj(new_channel)
+        channel_id = save_obj(new_channel)
         response_object = {
             'status': 'success',
             'message': 'Successfully created.',
+            'public_id': channel_id,
         }
         return response_object, 201
     else:
@@ -62,3 +64,4 @@ def get_channel_state(channel_id: object) -> object:
 def save_obj(data):
     db.session.add(data)
     db.session.commit()
+    return data.get_public_id
