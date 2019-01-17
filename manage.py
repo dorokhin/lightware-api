@@ -8,8 +8,13 @@ from app import blueprint
 from app.main import create_app, db
 from app.main.service.user_service import create_new_user, save_changes
 
-app = create_app(os.getenv('BOILERPLATE_ENV') or 'dev')
+from app.remote_controller import main as main_blueprint
+from app import socketio
+
+app = create_app(os.getenv('LIGHTWARE_ENV') or 'dev')
 app.register_blueprint(blueprint)
+app.register_blueprint(main_blueprint)
+socketio.init_app(app)
 
 app.app_context().push()
 manager = Manager(app)
