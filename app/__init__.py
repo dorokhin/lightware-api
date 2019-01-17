@@ -4,6 +4,9 @@ from flask import Blueprint
 from .main.controller.user_controller import api as user_ns
 from .main.controller.auth_controller import api as auth_ns
 from .main.controller.channel_controller import api as channel_ns
+from flask_socketio import SocketIO
+
+socketio = SocketIO()
 
 blueprint = Blueprint('api', __name__)
 authorizations = {
