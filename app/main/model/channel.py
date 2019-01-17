@@ -12,3 +12,7 @@ class Channel(db.Model):
     state = db.Column(db.Boolean, nullable=False, default=False)
     dimmer_state = db.Column(db.SmallInteger)
     public_id = db.Column(db.String(100), unique=True)
+
+    @property
+    def get_public_id(self):
+        return self.public_id

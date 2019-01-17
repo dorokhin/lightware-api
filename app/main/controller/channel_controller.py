@@ -18,18 +18,20 @@ class ChannelList(Resource):
         """List all channels"""
         return get_all_channels()
 
-    @admin_token_required
-    @api.response(201, 'Channel successfully created.')
     @api.doc('Create a new channel')
+    @admin_token_required
+    @api.param('Authorization', 'Authorization token', _in='header')
+    @api.response(201, 'Channel successfully created.')
     @api.expect(_channel, validate=True)
     def post(self):
         """Create channel"""
         data = request.json
         return add_channel(data=data)
 
-    @admin_token_required
-    @api.response(201, 'Channel successfully updated.')
     @api.doc('Update a channel')
+    @admin_token_required
+    @api.param('Authorization', 'Authorization token', _in='header')
+    @api.response(201, 'Channel successfully updated.')
     @api.expect(_channel, validate=True)
     def put(self):
         """Update channel"""
@@ -43,6 +45,7 @@ class Channel(Resource):
 
     @api.doc('Get channel by id')
     @token_required
+    @api.param('Authorization', 'Authorization token', _in='header')
     @api.marshal_with(_channel)
     def get(self, public_id):
         """Get channel by public_id"""
@@ -52,8 +55,9 @@ class Channel(Resource):
         else:
             return channel
 
-    @admin_token_required
     @api.doc('Update channel state')
+    @admin_token_required
+    @api.param('Authorization', 'Authorization token', _in='header')
     @api.marshal_with(_channel)
     @api.expect(_channel, validate=True)
     def put(self, public_id):
