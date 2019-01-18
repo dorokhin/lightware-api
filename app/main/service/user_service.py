@@ -61,21 +61,12 @@ def get_a_user(public_id):
 
 
 def generate_token(user):
-    try:
-        # generate the auth token
-        auth_token = User.encode_auth_token(user.id)
-        response_object = {
-            'status': 'success',
-            'message': 'Successfully registered.',
-            'Authorization': auth_token.decode()
-        }
-        return response_object, 201
-    except Exception as e:
-        response_object = {
-            'status': 'fail',
-            'message': 'Some error occurred. Please try again.'
-        }
-        return response_object, 401
+    response_object = {
+        'status': 'success',
+        'message': 'Successfully registered.',
+        'Authorization': User.encode_auth_token(user.id).decode()
+    }
+    return response_object, 201
 
 
 def save_changes(data):
