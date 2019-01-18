@@ -28,15 +28,6 @@ class ChannelList(Resource):
         data = request.json
         return add_channel(data=data)
 
-    @api.doc('Update a channel')
-    @admin_token_required
-    @api.param('Authorization', 'Authorization token', _in='header')
-    @api.response(201, 'Channel successfully updated.')
-    @api.expect(_channel, validate=True)
-    def put(self):
-        """Update channel"""
-        return 'test', 201
-
 
 @api.route('/<public_id>')
 @api.param('public_id', 'Channel identifier')
