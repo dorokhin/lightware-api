@@ -9,7 +9,7 @@ Click==7.0
 codecov==2.0.15
 coverage==5.0a4
 dnspython==1.16.0
-eventlet==0.24.1
+eventlet==0.31.0
 Flask==1.0.2
 Flask-Bcrypt==0.7.1
 Flask-Cors==3.0.7
